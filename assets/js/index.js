@@ -69,15 +69,17 @@ var displayWeather = function (weather, searchCity) {
     temperatureEl.textContent = "Temperature: " + weather.main.temp + " °F";
     temperatureEl.classList = "list-group-item"
 
+    //create a span element to hold Wind data
+    var windSpeedEl = document.createElement("span");
+    windSpeedEl.textContent = "Wind Speed: " + weather.wind.speed + " MPH";
+    windSpeedEl.classList = "list-group-item"
+
     //create a span element to hold Humidity data
     var humidityEl = document.createElement("span");
     humidityEl.textContent = "Humidity: " + weather.main.humidity + " %";
     humidityEl.classList = "list-group-item"
 
-    //create a span element to hold Wind data
-    var windSpeedEl = document.createElement("span");
-    windSpeedEl.textContent = "Wind Speed: " + weather.wind.speed + " MPH";
-    windSpeedEl.classList = "list-group-item"
+
 
     //append to container
     weatherContainerEl.appendChild(temperatureEl);
@@ -179,6 +181,14 @@ var display5Day = function (weather) {
 
         //append to forecast card
         forecastEl.appendChild(forecastHumEl);
+
+        //create Wind speed span
+        var forecastWindEl = document.createElement("span");
+        forecastWindEl.classList = "card-body text-center";
+        forecastWindEl.textContent = dailyForecast.wind.speed + "  MPH";
+
+        //append to forecast card
+        forecastEl.appendChild(forecastWindEl);
 
         //append to five day container
         forecastContainerEl.appendChild(forecastEl);
