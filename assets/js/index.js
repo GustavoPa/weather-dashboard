@@ -1,9 +1,8 @@
 var cities = [];
-
 var cityFormEl = document.querySelector("#city-search-form");
 var cityInputEl = document.querySelector("#city");
-var weatherContainerEl = document.querySelector("#current-weather-container");
 var citySearchInputEl = document.querySelector("#searched-city");
+var weatherContainerEl = document.querySelector("#current-weather-container");
 var forecastTitle = document.querySelector("#forecast");
 var forecastContainerEl = document.querySelector("#fiveday-container");
 var pastSearchButtonEl = document.querySelector("#past-search-buttons");
@@ -23,19 +22,26 @@ var formSumbitHandler = function (event) {
     pastSearch(city);
 }
 
+// saving search history to local storage
 var saveSearch = function () {
     localStorage.setItem("cities", JSON.stringify(cities));
 };
 
+// fetching the weather
 var getCityWeather = function (city) {
     var apiKey = "79ff03d6a9621e9e1380e19652d465f8"
     var apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`
 
     fetch(apiURL)
         .then(function (response) {
-            response.json().then(function (data) {
-                displayWeather(data, city);
-            });
+            //if response okay
+            if (response.ok) {
+                response.json().then(function (data) {
+                    displayWeather(data, city);
+                });
+            } else {
+                alert("City not found");
+            }
         });
 };
 
@@ -44,11 +50,10 @@ var displayWeather = function (weather, searchCity) {
     weatherContainerEl.textContent = "";
     citySearchInputEl.textContent = searchCity;
 
-    //console.log(weather);
 
     //create date element
     var currentDate = document.createElement("span")
-    currentDate.textContent = " (" + moment(weather.dt.value).format("MMM D, YYYY") + ") ";
+    currentDate.textContent = " (" + moment(weather.dt.value).format("MMM/ D /YYYY") + ") ";
     citySearchInputEl.appendChild(currentDate);
 
     //create an image element
@@ -73,11 +78,7 @@ var displayWeather = function (weather, searchCity) {
 
     //append to container
     weatherContainerEl.appendChild(temperatureEl);
-
-    //append to container
     weatherContainerEl.appendChild(humidityEl);
-
-    //append to container
     weatherContainerEl.appendChild(windSpeedEl);
 
     var lat = weather.coord.lat;
@@ -85,6 +86,7 @@ var displayWeather = function (weather, searchCity) {
     getUvIndex(lat, lon)
 }
 
+//fetching uv index 
 var getUvIndex = function (lat, lon) {
     var apiKey = "79ff03d6a9621e9e1380e19652d465f8"
     var apiURL = `https://api.openweathermap.org/data/2.5/uvi?appid=${apiKey}&lat=${lat}&lon=${lon}`
@@ -92,11 +94,8 @@ var getUvIndex = function (lat, lon) {
         .then(function (response) {
             response.json().then(function (data) {
                 displayUvIndex(data)
-                // console.log(data)
             });
         });
-    //console.log(lat);
-    //console.log(lon);
 }
 
 var displayUvIndex = function (index) {
@@ -122,6 +121,7 @@ var displayUvIndex = function (index) {
     weatherContainerEl.appendChild(uvIndexEl);
 }
 
+// fetching the 5day weather api
 var get5Day = function (city) {
     var apiKey = "79ff03d6a9621e9e1380e19652d465f8"
     var apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=${apiKey}`
@@ -146,7 +146,6 @@ var display5Day = function (weather) {
         var forecastEl = document.createElement("div");
         forecastEl.classList = "card bg-primary text-light m-2";
 
-        //console.log(dailyForecast)
 
         //create date element
         var forecastDate = document.createElement("h5")
@@ -178,7 +177,6 @@ var display5Day = function (weather) {
         //append to forecast card
         forecastEl.appendChild(forecastHumEl);
 
-        // console.log(forecastEl);
         //append to five day container
         forecastContainerEl.appendChild(forecastEl);
     }
@@ -187,7 +185,6 @@ var display5Day = function (weather) {
 
 var pastSearch = function (pastSearch) {
 
-    // console.log(pastSearch)
 
     pastSearchEl = document.createElement("button");
     pastSearchEl.textContent = pastSearch;
@@ -207,7 +204,6 @@ var pastSearchHandler = function (event) {
     }
 }
 
-// pastSearch();
 
 cityFormEl.addEventListener("submit", formSumbitHandler);
 pastSearchButtonEl.addEventListener("click", pastSearchHandler);
